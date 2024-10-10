@@ -119,62 +119,63 @@ export class Guide extends ZZZPlugin {
   }
 
   /** 下载攻略图 */
-  async getImg(name, group) {
-    let mysRes = [];
-    guides.collection_id[group].forEach(id =>
-      mysRes.push(this.getData(this.url + id))
-    );
+/** 下载攻略图 */
+async getImg(name, group) {
+  let mysRes = [];
+  guides.collection_id[group].forEach(id =>
+    mysRes.push(this.getData(this.url + id))
+  );
 
-    try {
-      mysRes = await Promise.all(mysRes);
-    } catch (error) {
-      this.e.reply('暂无攻略数据，请稍后再试');
-      console.log(`米游社接口报错：${error}}`);
-      return false;
-    }
-
-    // 搜索时过滤特殊符号，譬如「11号」
-    const filtered_name = name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '');
-    let posts = lodash.flatten(lodash.map(mysRes, item => item.data.posts));
-    let url;
-    for (const val of posts) {
-      if (
-        val.post.subject
-          .replace(/【[^】]*本[^】]*】/g, '')
-          .includes(filtered_name)
-      ) {
-        let max = 0;
-        val.image_list.forEach((v, i) => {
-          if (
-            Number(v.size) >= Number(val.image_list[max].size) &&
-            v.format != 'gif' // 动图天生 size 会撑得很大
-          ) {
-            max = i;
-          }
-        });
-        url = val.image_list[max].url;
-        // created_at = val.post.created_at;
-        // updated_at = val.post.updated_at;
-        break;
-      }
-    }
-    if (!url) {
-      return false;
-    }
-    logger.debug(
-      `${this.e.logFnc} 下载${name}攻略图 - ${guides.guideSources[group - 1]}`
-    );
-
-    const filename = `role_guide_${name}.png`;
-    const guidePath = path.join(this.getGuideFolder(group), filename);
-    const download = await downloadFile(url, guidePath);
-
-    logger.debug(
-      `${this.e.logFnc} 下载${name}攻略成功 - ${guides.guideSources[group - 1]}`
-    );
-
-    return download;
+  try {
+    mysRes = await Promise.all(mysRes);
+  } catch (error) {
+    this.e.reply('暂无攻略数据，请稍后再试');
+    console.log(`米游社接口报错：${error}}`);
+    return false;
   }
+
+  // 搜索时过滤特殊符号，譬如「11号」
+  const filtered_name = name.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '');
+  let posts = lodash.flatten(lodash.map(mysRes, item => item.data.posts));
+  let url;
+  for (const val of posts) {
+    if (
+      val.post.subject
+        .replace(/【[^】]*本[^】]*】/g, '')
+        .includes(filtered_name)
+    ) {
+      let max = 0;
+      val.image_list.forEach((v, i) => {
+        if (
+          Number(v.size) >= Number(val.image_list[max].size) &&
+          v.format != 'gif' // 动图天生 size 会撑得很大
+        ) {
+          max = i;
+        }
+      });
+      url = val.image_list[max].url;
+      url += '?x-oss-process=image/resize,s_1200/quality,q_90/auto-orient,0/interlace,1/format,jpg';
+      break;
+    }
+  }
+  if (!url) {
+    return false;
+  }
+  logger.debug(
+    `${this.e.logFnc} 下载${name}攻略图 - ${guides.guideSources[group - 1]}`
+  );
+
+  const filename = `role_guide_${name}.png`;
+  const guidePath = path.join(this.getGuideFolder(group), filename);
+  const download = await downloadFile(url, guidePath);
+
+  logger.debug(
+    `${this.e.logFnc} 下载${name}攻略成功 - ${guides.guideSources[group - 1]}`
+  );
+
+  return download;
+}
+
 
   /** 获取数据 */
   async getData(url) {
