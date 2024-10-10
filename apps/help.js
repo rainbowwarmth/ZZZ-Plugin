@@ -1,6 +1,5 @@
-import { ZZZPlugin } from '../lib/plugin.js';
 import { rulePrefix } from '../lib/common.js';
-import render from '../lib/render.js';
+import { ZZZPlugin } from '../lib/plugin.js';
 import settings from '../lib/settings.js';
 import _ from 'lodash';
 /**
@@ -40,6 +39,32 @@ const helpData = [
         needCK: true,
         needSK: false,
         commands: ['note', '便签', '便笺', '体力', '每日'],
+      },
+      {
+        title: '单月月报/菲林/邦布券/母带统计',
+        desc: '查看单月菲林、邦布券、加密/原装母带的收入情况（查询结果也会写入数据库）。其中，参数可以为空（默认为本月），也可以为年份月份或者月份，例如：2024年9月、9月、上月',
+        needCK: true,
+        needSK: false,
+        commands: [
+          'monthly+[参数]',
+          '菲林+[参数]',
+          '邦布券+[参数]',
+          '收入+[参数]',
+          '月报+[参数]',
+        ],
+      },
+      {
+        title: '查看全部月报/菲林/邦布券/母带统计',
+        desc: '查看菲林、邦布券、加密/原装母带的收入总情况（会查询全部可查询月份+已保存数据，新旧数据会进行合并）。',
+        needCK: true,
+        needSK: false,
+        commands: [
+          'monthly统计',
+          '菲林统计',
+          '邦布券统计',
+          '收入统计',
+          '月报统计',
+        ],
       },
     ],
   },
@@ -162,6 +187,13 @@ const helpData = [
         needSK: false,
         commands: ['更新+角色名+攻略[+0~7]'],
       },
+      {
+        title: '角色天赋图鉴',
+        desc: '查看角色天赋，默认等级为12级，核心技等级为F，你可以在指令后面加上自定义等级，以英文句号点分隔，顺序依次为：普通攻击、闪避、支援技、特殊技、连携技、核心技，其中除核心技等级为0和A～F表示外，其他等级为1～16的数字。例如：%猫又天赋6.12.11.10.9.F',
+        needCK: false,
+        needSK: false,
+        commands: ['角色名+天赋[+等级]'],
+      },
     ],
   },
   {
@@ -169,8 +201,15 @@ const helpData = [
     icon: 'fire',
     items: [
       {
+        title: '兑换码',
+        desc: '获取前瞻兑换码',
+        needCK: false,
+        needSK: false,
+        commands: ['code', '兑换码'],
+      },
+      {
         title: '绑定设备',
-        desc: '用于解决10041报错等问题',
+        desc: '用于尝试解决10041报错等问题（无法100%解决），需要发送设备信息，具体方法请发送%绑定设备帮助查看',
         needCK: true,
         needSK: false,
         commands: ['绑定设备'],
@@ -178,9 +217,37 @@ const helpData = [
       {
         title: '绑定设备帮助',
         desc: '查看如何绑定设备',
-        needCK: true,
+        needCK: false,
         needSK: false,
         commands: ['绑定设备帮助'],
+      },
+      {
+        title: '解绑设备',
+        desc: '解除绑定设备',
+        needCK: false,
+        needSK: false,
+        commands: ['解绑设备'],
+      },
+      {
+        title: '更新日志',
+        desc: '查看插件的Commit日志',
+        needCK: false,
+        needSK: false,
+        commands: ['[插件]更新日志'],
+      },
+      {
+        title: '版本',
+        desc: '查看插件版本日志',
+        needCK: false,
+        needSK: false,
+        commands: ['[插件]版本'],
+      },
+      {
+        title: '检查更新',
+        desc: '检查插件是否更新',
+        needCK: false,
+        needSK: false,
+        commands: ['[插件]检查更新'],
       },
     ],
   },
@@ -224,7 +291,7 @@ export class Help extends ZZZPlugin {
             },
             {
               title: '删除资源（需注意）',
-              desc: '请注意，此命令会删除自定义面板图，请确认做好备份后再执行！！！删除已经下载的资源，查询时需要再次下载（用于删除错误下载缓存）。',
+              desc: '删除已经下载的资源，查询时需要再次下载（用于删除错误下载缓存）。',
               needCK: false,
               needSK: false,
               commands: ['删除全部/所有资源'],
@@ -297,15 +364,36 @@ export class Help extends ZZZPlugin {
               needSK: false,
               commands: ['删除+角色名+面板图', '删除+角色名+角色图'],
             },
+            {
+              title: '设置默认设备',
+              desc: '设置默认设备信息，当用户没有绑定设备时，会使用默认设备信息',
+              needCK: false,
+              needSK: false,
+              commands: ['设置默认设备'],
+            },
+            {
+              title: '开启/关闭更新推送',
+              desc: '开启/关闭更新推送，更新仅推送给第一个主人',
+              needCK: false,
+              needSK: false,
+              commands: ['开启/关闭更新推送'],
+            },
+            {
+              title: '设置检查自动更新时间',
+              desc: '设置检查自动更新时间，cron表达式，如0 0/10 * * * ?',
+              needCK: false,
+              needSK: false,
+              commands: ['设置检查更新时间+cron表达式'],
+            },
           ],
         },
       ];
-      await render(this.e, 'help/index.html', {
+      await this.render('help/index.html', {
         helpData: _helpData,
       });
       return false;
     }
-    await render(this.e, 'help/index.html', {
+    await this.render('help/index.html', {
       helpData,
     });
     return false;

@@ -48,16 +48,48 @@ export function supportGuoba() {
           field: 'config.url',
           label: '绑定设备下载url',
           bottomHelpMessage: '设置自定义的绑定绑定设备下载url',
-          component:'Input',
+          component: 'Input',
           componentProps: {
             placeholder: '请输入绑定设备apk下载url',
-          }
+          },
         },
         {
           field: 'config.query.others',
           label: '查询他人信息',
           bottomHelpMessage: '是否允许查询他人信息',
           component: 'Switch',
+        },
+        {
+          field: 'config.update.autoCheck',
+          label: '更新推送',
+          bottomHelpMessage: '是否开启自动检查更新推送（仅检查，不更新）',
+          component: 'Switch',
+        },
+        {
+          field: 'config.update.cron',
+          label: '推送时间',
+          bottomHelpMessage: '设置自动检查更新推送的时间，cron表达式',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入cron表达式',
+          },
+        },
+        {
+          field: 'config.mysCode',
+          label: '过🐎',
+          bottomHelpMessage:
+            '设置米游社接口返回的错误码，遇到这些错误码会触发过🐎',
+          component: 'Select',
+          componentProps: {
+            mode: 'multiple',
+            options: [
+              { label: '1034', value: 1034 },
+              { label: '10035', value: 10035 },
+              { label: '10102', value: 10102 },
+              { label: '10041', value: 10041 },
+              { label: '5003', value: 5003 },
+            ],
+          },
         },
         {
           component: 'Divider',
@@ -193,6 +225,65 @@ export function supportGuoba() {
             min: 1,
             max: 7,
             placeholder: '请输入数字1～7',
+          },
+        },
+        {
+          component: 'Divider',
+          label:
+            '默认设备信息设置（通过"%设置默认设备"进行设置，如果不知道这是什么请勿修改）',
+        },
+        {
+          field: 'device.productName',
+          label: 'productName(deviceProduct)',
+          bottomHelpMessage: '设置默认设备productName字段',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入productName',
+          },
+        },
+        {
+          field: 'device.productType',
+          label: 'productType(deviceName)',
+          bottomHelpMessage: '设置默认设备productType字段',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入productType',
+          },
+        },
+        {
+          field: 'device.modelName',
+          label: 'modelName(deviceModel)',
+          bottomHelpMessage: '设置默认设备modelName字段',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入modelName',
+          },
+        },
+        {
+          field: 'device.osVersion',
+          label: 'osVersion(androidVersion)',
+          bottomHelpMessage: '设置默认设备osVersion字段',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入osVersion',
+          },
+        },
+        {
+          field: 'device.deviceInfo',
+          label: 'deviceInfo(deviceFingerprint)',
+          bottomHelpMessage: '设置默认设备deviceInfo字段',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入deviceInfo',
+          },
+        },
+        {
+          field: 'device.board',
+          label: 'board(deviceBoard)',
+          bottomHelpMessage: '设置默认设备board字段',
+          component: 'Input',
+          componentProps: {
+            placeholder: '请输入board',
           },
         },
         {
